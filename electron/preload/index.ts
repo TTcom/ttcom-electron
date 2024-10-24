@@ -1,7 +1,9 @@
 import { ipcRenderer, contextBridge } from 'electron'
-// 使用 contextBridge 来暴露安全的 API 给渲染进程
+
+// 暴露 readJsonFile 和 writeJsonFile API 给渲染进程
 contextBridge.exposeInMainWorld('electronAPI', {
   readJsonFile: (filePath) => ipcRenderer.invoke('read-json-file', filePath),
+  writeJsonFile: (filePath, jsonData) => ipcRenderer.invoke('write-json-file', filePath, jsonData),
 });
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld('ipcRenderer', {

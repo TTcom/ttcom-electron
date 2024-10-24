@@ -1,11 +1,19 @@
 <script setup>
 // import HelloWorld from './components/HelloWorld.vue'
-
-
+import {ref} from 'vue'
+let result = ref('')
 async function toload(){
   const filePath = '/githubproject/electron-vite-vue-main/src/components/data.json';
-  const result = await window.electronAPI.readJsonFile(filePath);
-  console.log('resulttttttttttt',result)
+  let data = await window.electronAPI.readJsonFile(filePath);
+  console.log('dataaaaaaaa',data)
+  result.value = data.list
+}
+async function tochange(){
+  result.value.push({name:'老李',age:'36'})
+  let jsonData ={"list":result.value}
+// 将修改后的数据发送到主进程，并保存到文件
+const filePath = '/githubproject/electron-vite-vue-main/src/components/data.json';
+await window.electronAPI.writeJsonFile(filePath, JSON.stringify(jsonData));
 }
 
 
@@ -16,6 +24,12 @@ async function toload(){
   <div>
     <div @click="toload"> 
       loadfiledata
+    </div>
+    <div style="margin: 100px 0;" @click="tochange"> 
+      changeData
+    </div>
+    <div v-for="(item,i) in result">
+         {{item.name}} && {{item.age}}
     </div>
     <!-- <a href="https://www.electronjs.org/" target="_blank">
       <img src="./assets/electron.svg" class="logo electron" alt="Electron logo" />

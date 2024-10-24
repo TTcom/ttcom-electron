@@ -129,3 +129,15 @@ ipcMain.handle('read-json-file', async (event, filePath) => {
     return { error: 'Failed to read file' };
   }
 });
+// 主进程监听渲染进程的请求，写入修改后的 JSON 文件
+ipcMain.handle('write-json-file', async (event, filePath, jsonString) => {
+  try {
+    // 先将 JSON 字符串反序列化回对象
+    const jsonData = JSON.parse(jsonString);
+    fs.writeFileSync(filePath, JSON.stringify(jsonData, null, 2), 'utf-8');
+    return { success: true };
+  } catch (error) {
+    console.error('Error writing JSON file:', error);
+    return { error: 'Failed to write file' };
+  }
+});
